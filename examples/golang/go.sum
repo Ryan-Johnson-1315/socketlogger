@@ -1,0 +1,6 @@
+github.com/Ryan-Johnson-1315/socketlogger v0.0.1 h1:eE7VIB87fgaTXRwbFQVojjn37BfVbx40SXezPNpFxJ4=
+github.com/Ryan-Johnson-1315/socketlogger v0.0.1/go.mod h1:r28g1rc/cQ6emitaDBeBVljEbNCYFi/hb/wkmLYHhok=
+github.com/Ryan-Johnson-1315/socketlogger v0.0.2 h1:YFExhbff1bzZQkxUX1d+i3cgHt3uTp/zNUu1pXqFBKE=
+github.com/Ryan-Johnson-1315/socketlogger v0.0.2/go.mod h1:r28g1rc/cQ6emitaDBeBVljEbNCYFi/hb/wkmLYHhok=
+github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
