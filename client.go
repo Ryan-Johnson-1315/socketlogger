@@ -10,6 +10,7 @@ import (
 
 type Client interface {
 	Connect(client, server Connection) error
+	Disconnect()
 
 	start()
 	buildSocket(local, remote Connection) (string, net.Conn, error)
@@ -20,9 +21,10 @@ type Client interface {
 
 type client struct {
 	comms
-	msgsToSend chan SocketMessage
-	remoteAddr net.Addr
-	this       interface{}
+	msgsToSend   chan SocketMessage
+	remoteAddr   net.Addr
+	this         interface{}
+	disconnected chan bool
 }
 
 func (c *client) Connect(client, server Connection) error {
@@ -33,9 +35,15 @@ func (c *client) Connect(client, server Connection) error {
 	} else {
 		c.connectionProtocol, c.sock, err = inst.buildSocket(client, server)
 		c.msgsToSend <- newLogMessage(MessageLevelSuccess, "Built %s at %s", c.connectionProtocol, c.sock.LocalAddr())
+		c.disconnected = make(chan bool)
 	}
 	c.start()
 	return err
+}
+
+func (c *client) Disconnect() {
+	close(c.msgsToSend)
+	<-c.disconnected
 }
 
 func (c *client) start() {
@@ -80,6 +88,8 @@ func (u *udpClient) writeOverSocket(msgsToSend chan SocketMessage) {
 			bytes, _ := json.Marshal(msg)
 			sock.WriteToUDP(bytes, addr)
 		}
+		sock.Close()
+		u.disconnected <- true // Notify that we have finished writing
 	}
 }
 
@@ -115,6 +125,8 @@ func (t *tcpClient) writeOverSocket(msgsToSend chan SocketMessage) {
 				bytes, _ := json.Marshal(msg)
 				sock.Write(bytes)
 			}
+			sock.Close()
+			t.disconnected <- true // Notify that we have finished sending over socket
 		}
 	}
 }

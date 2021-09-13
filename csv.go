@@ -17,10 +17,17 @@ type CsvServer interface {
 type csvserver struct {
 	writers   map[string]*csv.Writer
 	outputDir string
+	flush     chan bool
 }
 
 func (c *csvserver) SetOutputCsvDirectory(dir string) {
 	c.outputDir = dir
+	if !fileDirExists(dir, "") {
+		err := os.MkdirAll(dir, os.ModePerm)
+		if err != nil {
+			log.Print(newLogMessage(MessageLevelWrn, "Could not make directory \"%s\", %v", dir, err))
+		}
+	}
 }
 
 func (c *csvserver) buildCsvFile(msg *CsvMessage) *csv.Writer {
@@ -87,10 +94,15 @@ func (c *csvserver) write(msgs chan SocketMessage) {
 			}
 		}
 	}
+	c.flush <- true
+}
+
+func (c *csvserver) setFlushChannel(flush chan bool) {
+	c.flush = flush
 }
 
 type TcpCsvServer struct {
-	tcpServer
+	tcpserver
 	csvserver
 }
 
@@ -102,7 +114,7 @@ func NewTcpCsvServer() CsvServer {
 }
 
 type UdpCsvServer struct {
-	udpServer
+	udpserver
 	csvserver
 }
 
@@ -128,8 +140,7 @@ func (c *csvclient) setMsgChannel(msgsToSend chan SocketMessage) {
 }
 
 func (c *csvclient) NewCsvFile(fname string, headers []interface{}) {
-	msg := newCsvMessage(fname, headers)
-	c.msgsToSend <- msg
+	c.msgsToSend <- newCsvMessage(fname, headers)
 }
 
 func (c *csvclient) AppendRow(fname string, row []interface{}) {

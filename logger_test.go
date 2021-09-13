@@ -38,14 +38,14 @@ func TestUDPLog(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(udpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestUDPLog", i)
 		inputLines[i] = formatInput(input)
 		udpLoggerClient.Log(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, udpTimeout, time.Since(now)+udpTimeout)
 				t.FailNow()
 			}
@@ -54,7 +54,7 @@ func TestUDPLog(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -67,14 +67,14 @@ func TestUDPDbg(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(udpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestUDPDbg", i)
 		inputLines[i] = formatInput(input)
 		udpLoggerClient.Dbg(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, udpTimeout, time.Since(now)+udpTimeout)
 				t.FailNow()
 			}
@@ -83,7 +83,7 @@ func TestUDPDbg(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -96,14 +96,14 @@ func TestUDPWrn(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(udpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestUDPWrn", i)
 		inputLines[i] = formatInput(input)
 		udpLoggerClient.Wrn(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, udpTimeout, time.Since(now)+udpTimeout)
 				t.FailNow()
 			}
@@ -112,7 +112,7 @@ func TestUDPWrn(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -125,14 +125,14 @@ func TestUDPErr(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(udpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestUDPErr", i)
 		inputLines[i] = formatInput(input)
 		udpLoggerClient.Err(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, udpTimeout, time.Since(now)+udpTimeout)
 				t.FailNow()
 			}
@@ -141,7 +141,7 @@ func TestUDPErr(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -154,14 +154,14 @@ func TestUDPSuccess(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(udpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestUDPSuccess", i)
 		inputLines[i] = formatInput(input)
 		udpLoggerClient.Success(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, udpTimeout, time.Since(now)+udpTimeout)
 				t.FailNow()
 			}
@@ -170,7 +170,7 @@ func TestUDPSuccess(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -183,14 +183,14 @@ func TestTCPLog(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(tcpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestTCPLog", i)
 		inputLines[i] = formatInput(input)
 		tcpLoggerClient.Log(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, tcpTimeout, time.Since(now)+tcpTimeout)
 				t.FailNow()
 			}
@@ -199,7 +199,7 @@ func TestTCPLog(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -212,14 +212,14 @@ func TestTCPDbg(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(tcpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestTCPDbg", i)
 		inputLines[i] = formatInput(input)
 		tcpLoggerClient.Dbg(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, tcpTimeout, time.Since(now)+tcpTimeout)
 				t.FailNow()
 			}
@@ -228,7 +228,7 @@ func TestTCPDbg(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -241,14 +241,14 @@ func TestTCPWrn(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(tcpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestTCPWrn", i)
 		inputLines[i] = formatInput(input)
 		tcpLoggerClient.Wrn(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, tcpTimeout, time.Since(now)+tcpTimeout)
 				t.FailNow()
 			}
@@ -257,7 +257,7 @@ func TestTCPWrn(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -270,14 +270,14 @@ func TestTCPErr(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(tcpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestTCPErr", i)
 		inputLines[i] = formatInput(input)
 		tcpLoggerClient.Err(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, tcpTimeout, time.Since(now)+tcpTimeout)
 				t.FailNow()
 			}
@@ -286,7 +286,7 @@ func TestTCPErr(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -299,14 +299,14 @@ func TestTCPSuccess(t *testing.T) {
 	var now time.Time
 	for i := 0; i < NUM_LINES; i++ {
 		ticker := time.NewTicker(tcpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d", i)
+		input := fmt.Sprintf("This is a testing message #%d -> TestTCPSuccess", i)
 		inputLines[i] = formatInput(input)
 		tcpLoggerClient.Success(input)
 		select {
 		case line := <-consoleOut:
 			outputLines[i] = line
 			if failed {
-				close()
+				closeWriters()
 				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, tcpTimeout, time.Since(now)+tcpTimeout)
 				t.FailNow()
 			}
@@ -315,7 +315,7 @@ func TestTCPSuccess(t *testing.T) {
 			now = time.Now()
 		}
 	}
-	close()
+	closeWriters()
 	if correct, expected := checkOutput(); !correct {
 		t.Errorf("Lines did not match:%s", expected)
 		t.FailNow()
@@ -412,6 +412,74 @@ func BenchmarkTCPSuccess(b *testing.B) {
 	}
 }
 
+func TestTCPDisconnect(t *testing.T) {
+	server := NewTcpLoggerServer()
+	dir := t.TempDir()
+	server.SetLogFile(dir, "tcp_disconnect.log")
+	server.Bind(Connection{
+		Addr: "127.0.0.1",
+		Port: 43000,
+	})
+
+	logger := NewTcpLoggerClient()
+	logger.Connect(Connection{
+		Addr: "127.0.0.1",
+		Port: 0,
+	}, Connection{
+		Addr: "127.0.0.1",
+		Port: 43000,
+	})
+	expectedLines := 250
+	for i := 0; i < expectedLines; i++ {
+		logger.Log("TCP disconnect %d", i)
+	}
+
+	logger.Disconnect()                // Blocking
+	time.Sleep(500 * time.Millisecond) // Just enough to let the messages get to the server
+	server.Shutdown()                  // Blocking
+
+	dat, _ := os.ReadFile(filepath.Join(dir, "tcp_disconnect.log"))
+	lines := strings.Split(string(dat), "\n")
+
+	if len(lines) != expectedLines+4 { // +4 is the server and client and tcp disconnect output that gets written to the file, and the last newline after the split
+		t.Errorf("Output lines did not match expected. Expected: %d, Actual %d, %s", expectedLines+3, len(lines), filepath.Join(dir, "tcp_disconnect.log"))
+	}
+}
+
+func TestUDPDisconnect(t *testing.T) {
+	server := NewUdpLoggerServer()
+	dir := t.TempDir()
+	server.SetLogFile(dir, "udp_disconnect.log")
+	server.Bind(Connection{
+		Addr: "127.0.0.1",
+		Port: 43000,
+	})
+
+	logger := NewUdpLoggerClient()
+	logger.Connect(Connection{
+		Addr: "127.0.0.1",
+		Port: 0,
+	}, Connection{
+		Addr: "127.0.0.1",
+		Port: 43000,
+	})
+	expectedLines := 250
+	for i := 0; i < expectedLines; i++ {
+		logger.Log("UDP disconnect %d", i)
+	}
+
+	logger.Disconnect()                // Blocking
+	time.Sleep(500 * time.Millisecond) // Just enough to let the messages get to the server
+	server.Shutdown()                  // Blocking
+
+	dat, _ := os.ReadFile(filepath.Join(dir, "udp_disconnect.log"))
+	lines := strings.Split(string(dat), "\n")
+
+	if len(lines) != expectedLines+3 { // +3 is the server and client output that gets written to the file, and the last newline after the split
+		t.Errorf("Output lines did not match expected. Expected: %d, Actual %d, %s", expectedLines+3, len(lines), filepath.Join(dir, "udp_disconnect.log"))
+	}
+}
+
 func init() {
 	tcp := 60001
 	tcpLoggerServer = NewTcpLoggerServer()
@@ -420,7 +488,6 @@ func init() {
 		Addr: "127.0.0.1",
 		Port: tcp,
 	})
-	time.Sleep(50 * time.Millisecond)
 
 	tcpLoggerClient = NewTcpLoggerClient()
 	tcpLoggerClient.Connect(Connection{
@@ -438,7 +505,6 @@ func init() {
 		Addr: "127.0.0.1",
 		Port: udp,
 	})
-	time.Sleep(50 * time.Millisecond)
 
 	udpLoggerClient = NewUdpLoggerClient()
 	udpLoggerClient.Connect(Connection{
@@ -492,13 +558,13 @@ func capture() {
 	time.Sleep(50 * time.Millisecond) // Reset everything
 }
 
-func close() {
+func closeWriters() {
 	writer.Close()
 	reader.Close()
 }
 
 func checkOutput() (bool, string) {
-	close()
+	closeWriters()
 	success := true
 	expected := ""
 	for i, fullLine := range outputLines {

@@ -14,7 +14,9 @@ type LoggerServer interface {
 	Server
 }
 
-type loggerserver struct{}
+type loggerserver struct {
+	flush chan bool
+}
 
 func (l *loggerserver) SetLogFile(dir, name string) error {
 	var err error
@@ -42,15 +44,20 @@ func (l *loggerserver) getMessageType() SocketMessage {
 	return &LogMessage{}
 }
 
+func (l *loggerserver) setFlushChannel(flush chan bool) {
+	l.flush = flush
+}
+
 func (l *loggerserver) write(msgs chan SocketMessage) {
 	for msg := range msgs {
 		log.Printf("%s\n", msg)
 	}
+	l.flush <- true
 }
 
 type UdpLoggerServer struct {
 	loggerserver
-	udpServer
+	udpserver
 }
 
 func NewUdpLoggerServer() LoggerServer {
@@ -60,7 +67,7 @@ func NewUdpLoggerServer() LoggerServer {
 }
 
 type TcpLoggerServer struct {
-	tcpServer
+	tcpserver
 	loggerserver
 }
 
