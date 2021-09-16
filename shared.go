@@ -76,8 +76,7 @@ func (LogMessage) Type() MessageType {
 func newLogMessageCaller(lvl messageLevel, file string, line int, ok bool, format string, args ...interface{}) SocketMessage {
 	caller := "unknown"
 	if ok {
-		paths := strings.Split(file, "/")
-		caller = fmt.Sprintf("%s:%d", paths[len(paths)-1], line)
+		caller = fmt.Sprintf("%s:%d", filepath.Base(file), line)
 	}
 	return &LogMessage{
 		LogLevel: lvl,

@@ -1,5 +1,7 @@
 *.csv
 *.log
+coverage.out
+__pycache__
 
 # Executables
 server/server
