@@ -41,7 +41,7 @@ Will create the file named `data_collection.csv`
 ```
 {
   "caller": "DataCollector.java:542"
-  "rows": [1, "Rolf", "Kleinfeld", "rkleinfeld0@dell.com", "male", 72113]
+  "row": [1, "Rolf", "Kleinfeld", "rkleinfeld0@dell.com", "male", 72113]
   "csv_filename": "data_collection.csv"
 }
 ```

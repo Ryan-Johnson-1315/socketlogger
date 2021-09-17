@@ -45,7 +45,7 @@ type LogMessage struct {
 
 type CsvMessage struct {
 	Caller   string        `json:"caller"`
-	Row      []interface{} `json:"rows"`
+	Row      []interface{} `json:"row"`
 	Filename string        `json:"csv_filename"`
 }
 
@@ -75,7 +75,7 @@ func (LogMessage) Type() MessageType {
 
 func newLogMessageCaller(lvl messageLevel, file string, line int, ok bool, format string, args ...interface{}) SocketMessage {
 	caller := "unknown"
-	if ok {
+	if ok { 	 	
 		caller = fmt.Sprintf("%s:%d", filepath.Base(file), line)
 	}
 	return &LogMessage{
