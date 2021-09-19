@@ -17,6 +17,8 @@ func main() {
 		Addr: "127.0.0.1",
 		Port: 40000,
 	})
+	// Makes sure all of the messages get written over the socket
+	defer udp.Disconnect()
 
 	tcp := socketlogger.NewTcpLoggerClient()
 	tcp.Connect(socketlogger.Connection{
@@ -26,6 +28,8 @@ func main() {
 		Addr: "127.0.0.1",
 		Port: 40001,
 	})
+	// Makes sure all of the messages get written over the socket
+	defer tcp.Disconnect()
 
 	f := func(logger socketlogger.LoggerClient, protocol string) {
 		for i := 0; i < 100; i++ {
@@ -53,7 +57,4 @@ func main() {
 	go f(udp, "UDP")
 	// wait for this one to finish
 	f(tcp, "TCP")
-
-	udp.Disconnect()
-	tcp.Disconnect()
 }

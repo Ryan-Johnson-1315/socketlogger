@@ -16,10 +16,15 @@ func main() {
 		Port: 40000,
 	})
 	log.SetOutput(logger)
-	log.SetFlags((log.Flags() | log.Lshortfile) &^ (log.Ldate | log.Ltime))
+	log.SetFlags(socketlogger.EmbeddedFlags)
+	
+	// Also works with custom loggers
+	ErrorLogger := log.New(logger, "ERROR: ", socketlogger.EmbeddedFlags)
 	defer logger.Disconnect()
 
 	for i := 0; i < 250; i++ {
-		log.Println("Testing from the log.Prinln() method")
+		log.Println("Testing from the log.Println() method")
+		logger.Dbg("testing")
+		ErrorLogger.Println("hello world")
 	}
 }
