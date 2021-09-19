@@ -322,7 +322,7 @@ func TestTCPSuccess(t *testing.T) {
 	}
 }
 
-func TestSetcpLoggerClientFile(t *testing.T) {
+func TestSetTcpLoggerClientFile(t *testing.T) {
 	now := time.Now().Format("2006-01-02T15:04:05") + ".log"
 	dir := t.TempDir()
 	if err := logFile(NewUdpLoggerServer(), dir, now); err != "" {
@@ -349,66 +349,6 @@ func TestMessageType(t *testing.T) {
 
 	if !checkMsgType(tcpLoggerServer) {
 		t.Errorf("expected %T actual %T", &LogMessage{}, tcpLoggerServer.getMessageType())
-	}
-}
-
-func BenchmarkUDPLog(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		udpLoggerClient.Log("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkUDPDbg(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		udpLoggerClient.Dbg("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkUDPWrn(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		udpLoggerClient.Wrn("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkUDPErr(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		udpLoggerClient.Err("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkUDPSuccess(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		udpLoggerClient.Success("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkTCPLog(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		tcpLoggerClient.Log("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkTCPDbg(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		tcpLoggerClient.Dbg("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkTCPWrn(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		tcpLoggerClient.Wrn("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkTCPErr(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		tcpLoggerClient.Err("Benching with a long message %s", "***********************************************************************************")
-	}
-}
-
-func BenchmarkTCPSuccess(b *testing.B) {
-	for i := 0; i < NUM_LINES; i++ {
-		tcpLoggerClient.Success("Benching with a long message %s", "***********************************************************************************")
 	}
 }
 
@@ -477,6 +417,66 @@ func TestUDPDisconnect(t *testing.T) {
 
 	if len(lines) != expectedLines+3 { // +3 is the server and client output that gets written to the file, and the last newline after the split
 		t.Errorf("Output lines did not match expected. Expected: %d, Actual %d, %s", expectedLines+3, len(lines), filepath.Join(dir, "udp_disconnect.log"))
+	}
+}
+
+func BenchmarkUDPLog(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		udpLoggerClient.Log("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkUDPDbg(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		udpLoggerClient.Dbg("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkUDPWrn(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		udpLoggerClient.Wrn("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkUDPErr(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		udpLoggerClient.Err("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkUDPSuccess(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		udpLoggerClient.Success("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkTCPLog(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		tcpLoggerClient.Log("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkTCPDbg(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		tcpLoggerClient.Dbg("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkTCPWrn(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		tcpLoggerClient.Wrn("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkTCPErr(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		tcpLoggerClient.Err("Benching with a long message %s", "***********************************************************************************")
+	}
+}
+
+func BenchmarkTCPSuccess(b *testing.B) {
+	for i := 0; i < NUM_LINES; i++ {
+		tcpLoggerClient.Success("Benching with a long message %s", "***********************************************************************************")
 	}
 }
 
@@ -582,9 +582,8 @@ Expected: "%s"`, strings.TrimSuffix(output, "\n"), inputLines[i])
 
 func formatInput(msg string) string {
 	_, file, line, _ := runtime.Caller(1)
-	paths := strings.Split(file, "/")
-	file = paths[len(paths)-1]
-	return fmt.Sprintf("%s:%d -- %s", file, line+1, msg) + string(reset)
+	fname := filepath.Base(file)
+	return fmt.Sprintf("%s:%d -- %s", fname, line+1, msg) + string(reset)
 }
 
 func logFile(server LoggerServer, dir, fname string) string {

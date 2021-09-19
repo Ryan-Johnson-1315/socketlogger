@@ -2,6 +2,7 @@ package socketlogger
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -30,6 +31,7 @@ const (
 	udpProtocol         string       = "udp"
 	tcpProtocol         string       = "tcp"
 	bufSize             int          = 16384
+	NativeFlags         int          = log.Lshortfile &^ (log.Ldate | log.Ltime)
 )
 
 type SocketMessage interface {
@@ -66,7 +68,14 @@ func (l LogMessage) String() string {
 	case MessageLevelDbg:
 		str += string(cyan)
 	}
-	return str + fmt.Sprintf(" | %s -- %s%s", l.Caller, l.Message, string(reset))
+
+	// With the embedded approach, we don't want "--"" in there when the filename is already in the message
+	format := " | %s -- %s%s"
+	if l.Caller == "embedded" {
+		l.Caller = ""
+		format = " |%s %s%s" // first %s is l.Caller, which is now blank
+	}
+	return str + fmt.Sprintf(format, l.Caller, strings.TrimSuffix(l.Message, "\n"), string(reset))
 }
 
 func (LogMessage) Type() MessageType {
@@ -74,9 +83,12 @@ func (LogMessage) Type() MessageType {
 }
 
 func newLogMessageCaller(lvl messageLevel, file string, line int, ok bool, format string, args ...interface{}) SocketMessage {
-	caller := "unknown"
-	if ok { 	 	
+	caller := ""
+	if ok {
 		caller = fmt.Sprintf("%s:%d", filepath.Base(file), line)
+	}
+	if file == "embedded" {
+		caller = file
 	}
 	return &LogMessage{
 		LogLevel: lvl,

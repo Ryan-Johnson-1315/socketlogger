@@ -17,6 +17,8 @@ func startLogger(server socketlogger.LoggerServer, ip, dir, file string, port in
 	server.SetLogFile(dir, file)
 
 	if micro {
+		server.SetTimeFlags(log.Ldate | log.Ltime)
+	} else {
 		server.SetTimeFlags(log.Ldate | log.Ltime | log.Lmicroseconds)
 	}
 	err := server.Bind(socketlogger.Connection{
@@ -51,7 +53,7 @@ func main() {
 	ludp := flag.Int("log_udp", 0, "Enable UDP log messages on this port")
 	ltcp := flag.Int("log_tcp", 0, "Enable TCP server log messages on this port")
 	ldir := flag.String("log_dir", "logs", "Default directory to save log files to")
-	lmicro := flag.Bool("lsecs", false, "Add microseconds to log output")
+	lmicro := flag.Bool("lsecs", false, "Turn off microseconds to log output")
 	lext := flag.String("log_ext", "log", "Log file extension")
 
 	// CSV configs
