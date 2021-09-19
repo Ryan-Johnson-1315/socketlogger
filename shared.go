@@ -66,7 +66,7 @@ func (l LogMessage) String() string {
 	case MessageLevelDbg:
 		str += string(cyan)
 	}
-	return str + fmt.Sprintf(" | %s -- %s%s", l.Caller, l.Message, string(reset))
+	return str + fmt.Sprintf(" | %s -- %s%s", l.Caller, strings.TrimSuffix(l.Message, "\n"), string(reset))
 }
 
 func (LogMessage) Type() MessageType {
@@ -74,8 +74,8 @@ func (LogMessage) Type() MessageType {
 }
 
 func newLogMessageCaller(lvl messageLevel, file string, line int, ok bool, format string, args ...interface{}) SocketMessage {
-	caller := "unknown"
-	if ok { 	 	
+	caller := ""
+	if ok {
 		caller = fmt.Sprintf("%s:%d", filepath.Base(file), line)
 	}
 	return &LogMessage{
