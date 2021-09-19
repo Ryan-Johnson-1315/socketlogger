@@ -83,6 +83,7 @@ type LoggerClient interface {
 	Dbg(format string, args ...interface{})
 	Err(format string, args ...interface{})
 	Success(format string, args ...interface{})
+	Write(p []byte) (n int, err error) // io.Writer interface
 	Client
 }
 
@@ -117,6 +118,11 @@ func (l *loggerclient) Err(format string, args ...interface{}) {
 func (l *loggerclient) Success(format string, args ...interface{}) {
 	_, file, line, ok := runtime.Caller(1)
 	l.msgsToSend <- newLogMessageCaller(MessageLevelSuccess, file, line, ok, format, args...)
+}
+
+func (l *loggerclient) Write(p []byte) (int, error) {
+	l.msgsToSend <- newLogMessageCaller(MessageLevelLog, "embedded", 0, false, string(p))
+	return len(p), nil
 }
 
 type UdpLoggerClient struct {

@@ -55,7 +55,7 @@ Will append to the csv file with the rows specified
 6. `./server --help`
 
 
-## Native Go Examples
+## Go Examples
 `import "github.com/Ryan-Johnson-1315/socketlogger"`
 
 ### Logger Server
@@ -158,6 +158,34 @@ After the csv servers have shut down the following files will be made:
 ├── go.mod
 ├── go.sum
 └── main.go
+```
+
+### Native logging
+To set up a native application to use the socket logger, developers need to only call `log.SetOutput`. This allows you to update legacy code that is using the `log` package to send all log messages to the server.
+
+```
+// Set up the connection to the server. Can be UDP/TCP
+logger := socketlogger.NewUdpLoggerClient()
+logger.Connect(socketlogger.Connection{
+  Addr: "127.0.0.1",
+  Port: 0,
+}, socketlogger.Connection{
+  Addr: "127.0.0.1",
+  Port: 40000,
+})
+
+// Setting the output will send all log messages to the serveer
+log.SetOutput(logger)
+// Setting this will format the message to conform to other socketlogger messages
+log.SetFlags(socketlogger.EmbeddedFlags)
+// Makes sure all of the messages get written over the socket
+logger.Disconnect()
+```
+Doing this allows all other `log` function calls to be sent to the server. 
+
+To keep the console output as well as sending to the server, add an instance of `io.MultiWriter` as the output of the logger
+```
+log.SetOutput(io.MultiWriter(logger, os.StdOut))
 ```
 
 See `socketlogger/examples` for GoLang and other language client implementations
