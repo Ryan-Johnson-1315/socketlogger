@@ -120,7 +120,7 @@ func (l *loggerclient) Success(format string, args ...interface{}) {
 	l.msgsToSend <- newLogMessageCaller(MessageLevelSuccess, file, line, ok, format, args...)
 }
 
-func (l *loggerclient) Write(p []byte) (n int, err error) {
+func (l *loggerclient) Write(p []byte) (int, error) {
 	l.msgsToSend <- newLogMessageCaller(MessageLevelLog, "embedded", 0, false, string(p))
 	return len(p), nil
 }

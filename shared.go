@@ -31,7 +31,7 @@ const (
 	udpProtocol         string       = "udp"
 	tcpProtocol         string       = "tcp"
 	bufSize             int          = 16384
-	EmbeddedFlags       int          = log.Lshortfile &^ (log.Ldate | log.Ltime)
+	NativeFlags         int          = log.Lshortfile &^ (log.Ldate | log.Ltime)
 )
 
 type SocketMessage interface {
@@ -72,8 +72,8 @@ func (l LogMessage) String() string {
 	// With the embedded approach, we don't want "--"" in there when the filename is already in the message
 	format := " | %s -- %s%s"
 	if l.Caller == "embedded" {
-		format = " |%s %s%s"
 		l.Caller = ""
+		format = " |%s %s%s" // first %s is l.Caller, which is now blank
 	}
 	return str + fmt.Sprintf(format, l.Caller, strings.TrimSuffix(l.Message, "\n"), string(reset))
 }

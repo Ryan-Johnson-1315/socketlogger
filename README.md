@@ -161,7 +161,7 @@ After the csv servers have shut down the following files will be made:
 ```
 
 ### Native logging
-To set up a native application to use the socket logger, all that is needed is to set the writer of the logger and set the log flags. This allows you to update legacy code that is using the `log` package to send the log messages to the server.
+To set up a native application to use the socket logger, developers need to only call `log.SetOutput`. This allows you to update legacy code that is using the `log` package to send all log messages to the server.
 
 ```
 // Set up the connection to the server. Can be UDP/TCP

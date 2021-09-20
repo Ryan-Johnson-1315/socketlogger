@@ -16,10 +16,10 @@ func main() {
 		Port: 40000,
 	})
 	log.SetOutput(logger)
-	log.SetFlags(socketlogger.EmbeddedFlags)
-	
+	log.SetFlags(socketlogger.NativeFlags)
+
 	// Also works with custom loggers
-	ErrorLogger := log.New(logger, "ERROR: ", socketlogger.EmbeddedFlags)
+	ErrorLogger := log.New(logger, "ERROR: ", socketlogger.NativeFlags)
 	defer logger.Disconnect()
 
 	for i := 0; i < 250; i++ {
