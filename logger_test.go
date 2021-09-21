@@ -342,89 +342,6 @@ func TestSetTcpLoggerClientFile(t *testing.T) {
 	}
 }
 
-func TestUDPNative(t *testing.T) {
-	server := NewUdpLoggerServer()
-	server.Bind(Connection{
-		Addr: "127.0.0.1",
-		Port: 40000,
-	})
-	defer server.Shutdown()
-
-	client := NewUdpLoggerClient()
-	client.Connect(Connection{
-		Addr: "127.0.0.1",
-		Port: 0,
-	}, Connection{
-		Addr: "127.0.0.1",
-		Port: 40000,
-	})
-
-	defer client.Disconnect()
-	log.SetFlags(NativeFlags)
-	log.SetOutput(udpLoggerClient)
-
-	time.Sleep(time.Millisecond * 1500)
-
-	capture()
-	failed := false
-	var now time.Time
-	for i := 0; i < NUM_LINES; i++ {
-		ticker := time.NewTicker(udpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d -> UDP Native", i)
-		inputLines[i] = formatNativeInput(input)
-		log.Println(input)
-		select {
-		case line := <-consoleOut:
-			outputLines[i] = line
-			if failed {
-				closeWriters()
-				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, udpTimeout, time.Since(now)+udpTimeout)
-				t.FailNow()
-			}
-		case <-ticker.C:
-			failed = true
-			now = time.Now()
-		}
-	}
-	closeWriters()
-	if correct, expected := checkOutput(); !correct {
-		t.Errorf("Lines did not match:%s", expected)
-		t.FailNow()
-	}
-}
-
-func TestTCPNative(t *testing.T) {
-	log.SetFlags(NativeFlags)
-	log.SetOutput(tcpLoggerClient)
-
-	capture()
-	failed := false
-	var now time.Time
-	for i := 0; i < NUM_LINES; i++ {
-		ticker := time.NewTicker(udpTimeout * time.Duration(longWait))
-		input := fmt.Sprintf("This is a testing message #%d -> TCP Native", i)
-		inputLines[i] = formatNativeInput(input)
-		log.Println(input)
-		select {
-		case line := <-consoleOut:
-			outputLines[i] = line
-			if failed {
-				closeWriters()
-				t.Errorf("Message %d did not log in timeout period of %v. Actual:  %v", i, tcpTimeout, time.Since(now)+tcpTimeout)
-				t.FailNow()
-			}
-		case <-ticker.C:
-			failed = true
-			now = time.Now()
-		}
-	}
-	closeWriters()
-	if correct, expected := checkOutput(); !correct {
-		t.Errorf("Lines did not match:%s", expected)
-		t.FailNow()
-	}
-}
-
 func TestMessageType(t *testing.T) {
 	if !checkMsgType(udpLoggerServer) {
 		t.Errorf("expected %T actual %T", &LogMessage{}, udpLoggerServer.getMessageType())
@@ -667,12 +584,6 @@ func formatInput(msg string) string {
 	_, file, line, _ := runtime.Caller(1)
 	fname := filepath.Base(file)
 	return fmt.Sprintf("%s:%d -- %s", fname, line+1, msg) + string(reset)
-}
-
-func formatNativeInput(msg string) string {
-	_, file, line, _ := runtime.Caller(1)
-	fname := filepath.Base(file)
-	return fmt.Sprintf("%s:%d %s", fname, line+1, msg)
 }
 
 func logFile(server LoggerServer, dir, fname string) string {
