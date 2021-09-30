@@ -179,7 +179,7 @@ log.SetOutput(logger)
 // Setting this will format the message to conform to other socketlogger messages
 log.SetFlags(socketlogger.EmbeddedFlags)
 // Makes sure all of the messages get written over the socket
-logger.Disconnect()
+defer logger.Disconnect()
 ```
 Doing this allows all other `log` function calls to be sent to the server. 
 
